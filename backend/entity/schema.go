@@ -1,78 +1,68 @@
 package entity
 
 import (
-	"time"
-
-	"github.com/asaskevich/govalidator"
 	"gorm.io/gorm"
 )
 
-type User struct {
+type Role struct {
 	gorm.Model
-	Name      string `valid:"required~Name cannot be blank"`
-	Email     string `gorm:"uniqueIndex" valid:"email"`
-	StudentID string `valid:"matches(^[BMD]\\d{7}$)"`
-	Password  string
-
-	// 1 user เป็นเจ้าของได้หลาย video
-	Videos []Video `gorm:"foreignKey:OwnerID"`
-	// 1 user เป็นเจ้าของได้หลาย playlist
-	Playlists []Playlist `gorm:"foreignKey:OwnerID"`
+	Description string
+	Officer     []Officer `gorm:"foreignKey:Role_ID"`
 }
 
-type Video struct {
+type Gender struct {
 	gorm.Model
-	Name string
-	Url  string `gorm:"uniqueIndex"`
-	// OwnerID ทำหน้าที่เป็น FK
-	OwnerID *uint
-	// เป็นข้อมูล user เมื่อ join ตาราง
-	Owner       User         `gorm:"references:id"`
-	WatchVideos []WatchVideo `gorm:"foreignKey:VideoID"`
+	Description string
+	Officer     []Officer `gorm:"foreignKey:Gender_ID"`
+	Patiend     []Patiend `gorm:"foreignKey:Policing_ID"`
 }
 
-type Playlist struct {
+type Prefix struct {
 	gorm.Model
-	Title string
-	// OwnerID ทำหน้าที่เป็น FK
-	OwnerID *uint
-	// เป็นข้อมูล user เมื่อ join ตาราง
-	Owner       User         `gorm:"references:id"`
-	WatchVideos []WatchVideo `gorm:"foreignKey:PlaylistID"`
+	Description string
+	Officer     []Officer `gorm:"foreignKey:Prefix_ID"`
+	Patiend     []Patiend `gorm:"foreignKey:Policing_ID"`
 }
 
-type Resolution struct {
+type Policing struct {
 	gorm.Model
-	Value       string
-	WatchVideos []WatchVideo `gorm:"foreignKey:ResolutionID"`
+	Description string
+	Patiend     []Patiend `gorm:"foreignKey:Policing_ID"`
 }
 
-type WatchVideo struct {
+type Patiend struct {
 	gorm.Model
-	WatchedTime time.Time `valid:"past~Watched time must be a past date"`
+	Name          string
+	Date_of_Birth string
+	Age           uint
+	Address       string
+	ID_Card       uint
+	Phone         string
 
-	// ResolutionID ทำหน้าที่เป็น FK
-	ResolutionID *uint
-	Resolution   Resolution `gorm:"references:id" valid:"-"` 
+	Prefix_ID *uint
+	Prefix    Prefix `gorm:"references:id"`
 
-	// PlaylistID ทำหน้าที่เป็น FK
-	PlaylistID *uint
-	Playlist   Playlist `gorm:"references:id" valid:"-"` 
+	Gender_ID *uint
+	Gender    Gender `gorm:"references:id"`
 
-	// VideoID ทำหน้าที่เป็น FK
-	VideoID *uint
-	Video   Video `gorm:"references:id" valid:"-"`
+	Policing_ID *uint
+	Policing    Policing `gorm:"references:id"`
 }
 
-func init() {
-	govalidator.CustomTypeTagMap.Set("past", func(i interface{}, context interface{}) bool {
-		t := i.(time.Time)
-		now := time.Now()
-		return now.After(t)
-	})
-	govalidator.CustomTypeTagMap.Set("future", func(i interface{}, context interface{}) bool {
-		t := i.(time.Time)
-		now := time.Now()
-		return now.Before(time.Time(t))
-	})
+type Officer struct {
+	gorm.Model
+	Name     string
+	Age      uint
+	Phone    string
+	Email    string
+	Password string
+
+	Prefix_ID *uint
+	Prefix    Prefix `gorm:"references:id"`
+
+	Gender_ID *uint
+	Gender    Gender `gorm:"references:id"`
+
+	Role_ID *uint
+	Role    Role `gorm:"references:id"`
 }

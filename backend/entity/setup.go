@@ -1,10 +1,6 @@
 package entity
 
 import (
-	"fmt"
-	"time"
-
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -23,134 +19,88 @@ func SetupDatabase() {
 
 	// Migrate the schema
 	database.AutoMigrate(
-		&Video{},
-		&User{},
-		&Playlist{},
-		&Resolution{},
-		&WatchVideo{},
+		&Role{},
+		&Prefix{},
+		&Policing{},
+		&Gender{},
+		&Patiend{},
+		&Officer{},
 	)
 
 	db = database
 
-	password, err := bcrypt.GenerateFromPassword([]byte("123456"), 14)
+	//Prefix data
 
-	db.Model(&User{}).Create(&User{
-		Name:     "Chanwit",
-		Email:    "chanwit@gmail.com",
-		Password: string(password),
-	})
-	db.Model(&User{}).Create(&User{
-		Name:     "Name",
-		Email:    "name@example.com",
-		Password: string(password),
-	})
-
-	var chanwit User
-	var name User
-	db.Raw("SELECT * FROM users WHERE email = ?", "chanwit@gmail.com").Scan(&chanwit)
-	db.Raw("SELECT * FROM users WHERE email = ?", "name@example.com").Scan(&name)
-
-	// --- Video Data
-	saLecture4 := Video{
-		Name:  "SA Lecture 4",
-		Url:   "https://youtu.be/123",
-		Owner: chanwit,
+	prefix_one := Prefix{
+		Description: "นาย",
 	}
-	db.Model(&Video{}).Create(&saLecture4)
+	db.Model(&Prefix{}).Create(&prefix_one)
 
-	howTo := Video{
-		Name:  "How to ...",
-		Url:   "https://youtu.be/456",
-		Owner: chanwit,
+	prefix_two := Prefix{
+		Description: "นาง",
 	}
-	db.Model(&Video{}).Create(&howTo)
+	db.Model(&Prefix{}).Create(&prefix_two)
 
-	helloWorld := Video{
-		Name:  "Hello World with C",
-		Url:   "https://youtu.be/789",
-		Owner: name,
+	prefix_three := Prefix{
+		Description: "นางสาว",
 	}
-	db.Model(&Video{}).Create(&helloWorld)
+	db.Model(&Prefix{}).Create(&prefix_three)
 
-	// Resolution Data
-	res360p := Resolution{
-		Value: "360p",
+	// gender data
+	gender_one := Gender{
+		Description: "ชาย",
 	}
-	db.Model(&Resolution{}).Create(&res360p)
+	db.Model(&Gender{}).Create(&gender_one)
 
-	res480p := Resolution{
-		Value: "480p",
+	gender_two := Prefix{
+		Description: "หญิง",
 	}
-	db.Model(&Resolution{}).Create(&res480p)
-
-	res720p := Resolution{
-		Value: "720p",
+	db.Model(&Gender{}).Create(&gender_two)
+	//role data
+	role_one := Role{
+		Description: "เจ้าหน้าที่คัดกรองคนไข้",
 	}
-	db.Model(&Resolution{}).Create(&res720p)
+	db.Model(&Role{}).Create(&role_one)
 
-	// PlayList Data
-	watchedPlayListOfChanwit := Playlist{
-		Title: "Watched",
-		Owner: chanwit,
+	role_two := Role{
+		Description: "เจ้าหน้าที่ฝ่ายจัดการคนไข้",
 	}
-	db.Model(&Playlist{}).Create(&watchedPlayListOfChanwit)
+	db.Model(&Role{}).Create(&role_two)
 
-	musicPlayListOfChanwit := Playlist{
-		Title: "Music",
-		Owner: chanwit,
+	role_three := Role{
+		Description: "เจ้าหน้าที่ฝ่ายรถฉุกเฉิน",
 	}
-	db.Model(&Playlist{}).Create(&musicPlayListOfChanwit)
+	db.Model(&Role{}).Create(&role_three)
 
-	watchedPlayListOfName := Playlist{
-		Title: "Watched",
-		Owner: name,
+	//Policing data
+	policing_one := Policing{
+		Description: "สิทธิ์ข้าราชการ",
 	}
-	db.Model(&Playlist{}).Create(&watchedPlayListOfName)
+	db.Model(&Policing{}).Create(&policing_one)
 
-	// watch 1
-	db.Model(&WatchVideo{}).Create(&WatchVideo{
-		Playlist:    watchedPlayListOfChanwit,
-		Video:       saLecture4,
-		WatchedTime: time.Now(),
-		Resolution:  res720p,
-	})
-	// watch 2
-	db.Model(&WatchVideo{}).Create(&WatchVideo{
-		Playlist:    watchedPlayListOfName,
-		Video:       helloWorld,
-		WatchedTime: time.Now(),
-		Resolution:  res480p,
-	})
-	// watch 3
-	db.Model(&WatchVideo{}).Create(&WatchVideo{
-		Playlist:    watchedPlayListOfChanwit,
-		Video:       helloWorld,
-		WatchedTime: time.Now(),
-		Resolution:  res720p,
-	})
-
-	//
-	// === Query
-	//
-
-	var target User
-	db.Model(&User{}).Find(&target, db.Where("email = ?", "chanwit@gmail.com"))
-
-	var watchedPlaylist Playlist
-	db.Model(&Playlist{}).Find(&watchedPlaylist, db.Where("title = ? and owner_id = ?", "Watched", target.ID))
-
-	var watchedList []*WatchVideo
-	db.Model(&WatchVideo{}).
-		Joins("Playlist").
-		Joins("Resolution").
-		Joins("Video").
-		Find(&watchedList, db.Where("playlist_id = ?", watchedPlaylist.ID))
-
-	for _, wl := range watchedList {
-		fmt.Printf("Watch Video: %v\n", wl.ID)
-		fmt.Printf("%v\n", wl.Playlist.Title)
-		fmt.Printf("%v\n", wl.Resolution.Value)
-		fmt.Printf("%v\n", wl.Video.Name)
-		fmt.Println("====")
+	policing_two := Policing{
+		Description: "สิทธิ์บัตรทอง",
 	}
+	db.Model(&Policing{}).Create(&policing_two)
+
+	policing_three := Policing{
+		Description: "สิทธิ์ประกันสังคม",
+	}
+	db.Model(&Policing{}).Create(&policing_three)
+
+	policing_four := Policing{
+		Description: "สิทธิ์องกรคู่สัญญา",
+	}
+	db.Model(&Policing{}).Create(&policing_four)
+
+	policing_five := Policing{
+		Description: "ผู้ป่วยถือบัตรประกันสุขภาพ",
+	}
+	db.Model(&Policing{}).Create(&policing_five)
+
+	policing_six := Policing{
+		Description: "ไม่มี",
+	}
+	db.Model(&Policing{}).Create(&policing_six)
+
 }

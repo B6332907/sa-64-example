@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/chanwit/sa-64-example/controller"
-	"github.com/chanwit/sa-64-example/entity"
-	"github.com/chanwit/sa-64-example/middlewares"
+	"github.com/B6332907/Project_SE/controller"
+	"github.com/B6332907/sa-64-example/entity"
+	"github.com/B6332907/sa-64-example/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,49 +17,48 @@ func main() {
 	{
 		protected := api.Use(middlewares.Authorizes())
 		{
-			// User Routes
-			protected.GET("/users", controller.ListUsers)
-			protected.GET("/user/:id", controller.GetUser)
-			protected.PATCH("/users", controller.UpdateUser)
-			protected.DELETE("/users/:id", controller.DeleteUser)
+			// Gender Routes
+			protected.GET("/genders", controller.ListGenders)
+			protected.GET("/gender/:id", controller.GetGender)
+			protected.PATCH("/genders", controller.UpdateGender)
+			protected.DELETE("/genders/:id", controller.DeleteGender)
 
-			// Video Routes
-			protected.GET("/videos", controller.ListVideos)
-			protected.GET("/video/:id", controller.GetVideo)
-			protected.POST("/videos", controller.CreateVideo)
-			protected.PATCH("/videos", controller.UpdateVideo)
-			protected.DELETE("/videos/:id", controller.DeleteVideo)
+			// Officer Routes
+			protected.GET("/officers", controller.ListOfficers)
+			protected.GET("/officer/:id", controller.GetOfficer)
+			protected.POST("/officers", controller.CreateOfficer)
+			protected.PATCH("/officers", controller.UpdateOfficer)
+			protected.DELETE("/officers/:id", controller.DeleteOfficer)
 
-			// Playlist Routes
-			protected.GET("/playlists", controller.ListPlaylists)
-			protected.GET("/playlist/:id", controller.GetPlaylist)
-			protected.GET("/playlist/watched/user/:id", controller.GetPlaylistWatchedByUser)
-			protected.POST("/playlists", controller.CreatePlaylist)
-			protected.PATCH("/playlists", controller.UpdatePlaylist)
-			protected.DELETE("/playlists/:id", controller.DeletePlaylist)
+			// Prefix Routes
+			protected.GET("/prefixs", controller.ListPrefixs)
+			protected.GET("/prefix/:id", controller.GetPrefix)
+			protected.POST("/prefixs", controller.CreatePrefix)
+			protected.PATCH("/prefixs", controller.UpdatePrefix)
+			protected.DELETE("/prefixs/:id", controller.DeletePrefix)
 
-			// Resolution Routes
-			protected.GET("/resolutions", controller.ListResolutions)
-			protected.GET("/resolution/:id", controller.GetResolution)
-			protected.POST("/resolutions", controller.CreateResolution)
-			protected.PATCH("/resolutions", controller.UpdateResolution)
-			protected.DELETE("/resolutions/:id", controller.DeleteResolution)
+			// Role Routes
+			protected.GET("/roles", controller.ListRoles)
+			protected.GET("/role/:id", controller.GetRole)
+			protected.POST("/roles", controller.CreateRole)
+			protected.PATCH("/roles", controller.UpdateRole)
+			protected.DELETE("/roles/:id", controller.DeleteRole)
 
-			// WatchVideo Routes
-			protected.GET("/watch_videos", controller.ListWatchVideos)
-			protected.GET("/watchvideo/:id", controller.GetWatchVideo)
-			protected.POST("/watch_videos", controller.CreateWatchVideo)
-			protected.PATCH("/watch_videos", controller.UpdateWatchVideo)
-			protected.DELETE("/watchvideors/:id", controller.DeleteWatchVideo)
+			// Patiend Routes
+			protected.GET("/patiends", controller.ListPatiends)
+			protected.GET("/patiend/:id", controller.GetPatiend)
+			protected.POST("/patiends", controller.CreatePatiend)
+			protected.PATCH("/patiends", controller.UpdatePatiend)
+			protected.DELETE("/patiendrs/:id", controller.DeletePatiend)
 
 		}
 	}
 
-	// User Routes
-	r.POST("/users", controller.CreateUser)
+	// Gender Routes
+	//r.POST("/genders", controller.CreateGender)
 
 	// Authentication Routes
-	r.POST("/login", controller.Login)
+	//r.POST("/login", controller.Login)
 
 	// Run the server
 	r.Run()

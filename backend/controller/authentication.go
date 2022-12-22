@@ -24,22 +24,22 @@ type LoginResponse struct {
 // POST /login
 func Login(c *gin.Context) {
 	var payload LoginPayload
-	var user entity.User
+	var officer entity.Officer
 
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	// ค้นหา user ด้วย email ที่ผู้ใช้กรอกเข้ามา
-	if err := entity.DB().Raw("SELECT * FROM users WHERE email = ?", payload.Email).Scan(&user).Error; err != nil {
+	// ค้นหา officer ด้วย email ที่ผู้ใช้กรอกเข้ามา
+	if err := entity.DB().Raw("SELECT * FROM officers WHERE email = ?", payload.Email).Scan(&officer).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	// ตรวจสอบรหัสผ่าน
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(payload.Password))
+	err := bcrypt.CompareHashAndPassword([]byte(officer.Password), []byte(payload.Password))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user credentials"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid officer credentials"})
 		return
 	}
 
@@ -54,7 +54,7 @@ func Login(c *gin.Context) {
 		ExpirationHours: 24,
 	}
 
-	signedToken, err := jwtWrapper.GenerateToken(user.Email)
+	signedToken, err := jwtWrapper.GenerateToken(officer.Email)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "error signing token"})
 		return
@@ -62,7 +62,7 @@ func Login(c *gin.Context) {
 
 	tokenResponse := LoginResponse{
 		Token: signedToken,
-		ID:    user.ID,
+		ID:    officer.ID,
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": tokenResponse})
